@@ -13,20 +13,19 @@ import java.util.List;
  */
 public class MinnesotaWildFan implements HockeyFan {
 
-    List<TeamData> teamData;
-    public List<TeamData> notifyFan(List <TeamData> td) {
+    TeamData teamData;
+    @Override
+    public void notifyFan(List <TeamData> td) {
         
         for(int i = 0; i <= td.size(); i++) {
             
             if(td.get(i).teamName == "Minnesota Wild") {
                 
-                teamData = td;
+                teamData = td.get(i);
                 
             }
             
         }
-        
-        return teamData;
         
     }
     

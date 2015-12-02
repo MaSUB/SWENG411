@@ -71,9 +71,11 @@ public class NHL {
         
     }
     
-    public TeamData NotifyAll(){
+    public void NotifyAll(){
         
-        return td.element();
+        for(int i = 0; i <= fans.size();i++) {
+            fans.get(i).notifyFan(td);
+       }
         
     }
     

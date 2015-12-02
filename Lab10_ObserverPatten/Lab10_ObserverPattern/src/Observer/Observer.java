@@ -5,21 +5,10 @@
  */
 package Observer;
 
-import java.util.List;
-
 /**
  *
  * @author mst5182
  */
-public class PittsburghPensFan implements HockeyFan {
-
-    TeamData teamData;
-    
-    @Override
-    public void notifyFan(List<TeamData> td) {
-        
-        
-        
-    }
+public interface Observer  {
     
 }

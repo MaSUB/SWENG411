@@ -15,9 +15,9 @@ public class GeneralHockeyFan implements HockeyFan {
 
     List<TeamData> teamData;
     @Override
-    public List<TeamData> notifyFan(List<TeamData> td) {
+    public void notifyFan(List<TeamData> td) {
         
-        return teamData;
+        teamData = td;
         
     }
     

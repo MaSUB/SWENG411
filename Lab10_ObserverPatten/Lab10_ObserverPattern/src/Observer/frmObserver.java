@@ -53,8 +53,8 @@ public class frmObserver extends javax.swing.JFrame {
         lbWinVal = new javax.swing.JLabel();
         lbLossVal = new javax.swing.JLabel();
         btnPittsburgh = new javax.swing.JButton();
-        btnMinnesota = new javax.swing.JButton();
-        btnHockeyFan = new javax.swing.JButton();
+        btnPittsburgh1 = new javax.swing.JButton();
+        btnPittsburgh2 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         lstTeams = new javax.swing.JList();
         lbLosses1 = new javax.swing.JLabel();
@@ -93,20 +93,19 @@ public class frmObserver extends javax.swing.JFrame {
             }
         });
 
-        btnMinnesota.setText("Minnesota Wild");
-        btnMinnesota.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        btnMinnesota.addActionListener(new java.awt.event.ActionListener() {
+        btnPittsburgh1.setText("Minnesota Wild");
+        btnPittsburgh1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnPittsburgh1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMinnesotaActionPerformed(evt);
+                btnPittsburgh1ActionPerformed(evt);
             }
         });
 
-        btnHockeyFan.setText("General Hockey Fan");
-        btnHockeyFan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        btnHockeyFan.setPreferredSize(new java.awt.Dimension(75, 17));
-        btnHockeyFan.addActionListener(new java.awt.event.ActionListener() {
+        btnPittsburgh2.setText("General Hockey Fan");
+        btnPittsburgh2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnPittsburgh2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHockeyFanActionPerformed(evt);
+                btnPittsburgh2ActionPerformed(evt);
             }
         });
 
@@ -138,6 +137,7 @@ public class frmObserver extends javax.swing.JFrame {
         lbGAVal.setText("0");
 
         lbTeamName.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbTeamName.setText(".");
 
         lbTeamNameTitle.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbTeamNameTitle.setText("Selected Team:");
@@ -173,8 +173,8 @@ public class frmObserver extends javax.swing.JFrame {
                         .addGap(106, 106, 106))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(btnHockeyFan, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnMinnesota, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                            .addComponent(btnPittsburgh2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnPittsburgh1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
                             .addComponent(btnPittsburgh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -187,14 +187,14 @@ public class frmObserver extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lbTeamNameTitle)
-                    .addComponent(btnPittsburgh, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnPittsburgh, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lbTeamName)
-                    .addComponent(btnMinnesota, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnPittsburgh1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnHockeyFan, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnPittsburgh2, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,54 +231,22 @@ public class frmObserver extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPittsburghActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPittsburghActionPerformed
-        DefaultListModel dlm = new DefaultListModel();
-        
-        for(int i = 0; i <= nhl.td.size()-1;i++){
-            
-            if(!nhl.fans.contains(PittsburghPensFan.class)){
-                if(nhl.td.get(i).teamName != "Pittsburgh Penguins")
-                    dlm.addElement(nhl.td.get(i).teamName);
-            }
-            
-            else{
-                if(nhl.td.get(i).teamName != "Pittsburgh Penguins")
-                    dlm.removeElement("Pittsburgh Penguins");
-            }     
-        }
-        
-        lstTeams.setModel(dlm);
-        lbTeamName.setText("");
+        // TODO add your handling code here:
     }//GEN-LAST:event_btnPittsburghActionPerformed
 
-    private void btnMinnesotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinnesotaActionPerformed
+    private void btnPittsburgh1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPittsburgh1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnMinnesotaActionPerformed
+    }//GEN-LAST:event_btnPittsburgh1ActionPerformed
 
-    private void btnHockeyFanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHockeyFanActionPerformed
-        DefaultListModel dlm = new DefaultListModel();
-        
-        
-        for(int i = 0; i <= nhl.td.size()-1;i++){
-            if(!nhl.fans.contains(GeneralHockeyFan.class)){
-                
-                if(nhl.td.get(i).teamName != "Pittsburgh Penguins" ||
-                        nhl.td.get(i).teamName != "Minnesota Wild"){
-                
-                    dlm.addElement(nhl.td.get(i).teamName);
-                }
-            }
-            
-        }
-        lstTeams.setModel(dlm);
-        lbTeamName.setText("");
-    }//GEN-LAST:event_btnHockeyFanActionPerformed
+    private void btnPittsburgh2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPittsburgh2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPittsburgh2ActionPerformed
 
     //
     //
     //
     //
     private void lstTeamsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstTeamsValueChanged
-        if(lstTeams.getSelectedValues() != null)    
             lbTeamName.setText(lstTeams.getSelectedValue().toString());
     }//GEN-LAST:event_lstTeamsValueChanged
 
@@ -323,9 +291,9 @@ public class frmObserver extends javax.swing.JFrame {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnHockeyFan;
-    private javax.swing.JButton btnMinnesota;
     private javax.swing.JButton btnPittsburgh;
+    private javax.swing.JButton btnPittsburgh1;
+    private javax.swing.JButton btnPittsburgh2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbGAVal;
