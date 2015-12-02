@@ -5,35 +5,20 @@
  */
 package Observer;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultListModel;
-
 /**
  *
- * @author mst5182
+ * @author Mason
  */
 public class frmObserver extends javax.swing.JFrame {
 
-    NHL nhl = new NHL();
+    static Weather weather = new Weather();
+    WindSpeed wind;
+    Pressure pressure;
     /**
      * Creates new form frmObserver
      */
-    public frmObserver() throws FileNotFoundException {
-        initComponents(); 
-        
-        DefaultListModel dlm = new DefaultListModel();
-        for(int i = 0; i <= nhl.td.size()-1;i++){
-            
-            dlm.addElement(nhl.td.get(i).teamName);
-            
-        }
-        lstTeams.setModel(dlm);
-        lbTeamName.setText("");
+    public frmObserver() {
+        initComponents();
     }
 
     /**
@@ -45,8 +30,11 @@ public class frmObserver extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lbGamesPlayed = new javax.swing.JLabel();
+        btnSubPressure = new javax.swing.JButton();
+        btnSubWind = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+<<<<<<< HEAD
         lbWins = new javax.swing.JLabel();
         lbLosses = new javax.swing.JLabel();
         lbGameVals = new javax.swing.JLabel();
@@ -65,34 +53,23 @@ public class frmObserver extends javax.swing.JFrame {
         lbGAVal = new javax.swing.JLabel();
         lbTeamName = new javax.swing.JLabel();
         lbTeamNameTitle = new javax.swing.JLabel();
+=======
+        tbPressure = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        tbWind = new javax.swing.JTextField();
+>>>>>>> origin/master
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        lbGamesPlayed.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbGamesPlayed.setText("Games Played:");
-
-        jLabel2.setText("Team/s:");
-
-        lbWins.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbWins.setText("Wins:");
-
-        lbLosses.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbLosses.setText("Losses:");
-
-        lbGameVals.setText("0");
-
-        lbWinVal.setText("0");
-
-        lbLossVal.setText("0");
-
-        btnPittsburgh.setText("Pittsburgh Penguins");
-        btnPittsburgh.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        btnPittsburgh.addActionListener(new java.awt.event.ActionListener() {
+        btnSubPressure.setText("Subscribe");
+        btnSubPressure.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPittsburghActionPerformed(evt);
+                btnSubPressureActionPerformed(evt);
             }
         });
 
+<<<<<<< HEAD
         btnPittsburgh1.setText("Minnesota Wild");
         btnPittsburgh1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         btnPittsburgh1.addActionListener(new java.awt.event.ActionListener() {
@@ -131,16 +108,32 @@ public class frmObserver extends javax.swing.JFrame {
         lbLosses3.setText("Goals Against");
 
         lbOTLVal.setText("0");
+=======
+        btnSubWind.setText("Subscribe");
+        btnSubWind.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubWindActionPerformed(evt);
+            }
+        });
 
-        lbGFVal.setText("0");
+        jLabel1.setText("Wind:");
+>>>>>>> origin/master
 
-        lbGAVal.setText("0");
+        jLabel2.setText("Pressure:");
 
+        jLabel3.setText("Barometric pressure:");
+        jLabel3.setToolTipText("");
+
+<<<<<<< HEAD
         lbTeamName.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbTeamName.setText(".");
 
         lbTeamNameTitle.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbTeamNameTitle.setText("Selected Team:");
+=======
+        jLabel4.setText("Wind Speed:");
+        jLabel4.setToolTipText("");
+>>>>>>> origin/master
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -149,6 +142,7 @@ public class frmObserver extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+<<<<<<< HEAD
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -195,41 +189,50 @@ public class frmObserver extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnPittsburgh2, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                 .addGap(12, 12, 12)
+=======
+                    .addComponent(jLabel1)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(btnSubWind)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel4)
+                            .addGap(18, 18, 18)
+                            .addComponent(tbWind, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(btnSubPressure)
+                                .addComponent(jLabel2))
+                            .addGap(41, 41, 41)
+                            .addComponent(jLabel3)
+                            .addGap(18, 18, 18)
+                            .addComponent(tbPressure, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(83, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+>>>>>>> origin/master
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbGamesPlayed)
-                            .addComponent(lbGameVals))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbWinVal)
-                            .addComponent(lbWins))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbLosses)
-                            .addComponent(lbLossVal))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lbLosses1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(lbLosses2)
-                                    .addComponent(lbGFVal))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(lbLosses3)
-                                    .addComponent(lbGAVal)))
-                            .addComponent(lbOTLVal))))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSubPressure)
+                    .addComponent(tbPressure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(25, 25, 25)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSubWind)
+                    .addComponent(tbWind, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+<<<<<<< HEAD
     private void btnPittsburghActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPittsburghActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPittsburghActionPerformed
@@ -249,6 +252,34 @@ public class frmObserver extends javax.swing.JFrame {
     private void lstTeamsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstTeamsValueChanged
             lbTeamName.setText(lstTeams.getSelectedValue().toString());
     }//GEN-LAST:event_lstTeamsValueChanged
+=======
+    private void btnSubPressureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubPressureActionPerformed
+        if(btnSubPressure.getLabel() == "Subscribe"){
+            btnSubPressure.setText("Unsubscribe");
+            weather.subscribe(pressure);
+            return;
+        }
+        else if(btnSubPressure.getLabel() == "Unsubscribe") {
+            btnSubPressure.setText("Subscribe");
+            weather.unsubscribe(pressure);
+            return;
+        }
+            
+    }//GEN-LAST:event_btnSubPressureActionPerformed
+
+    private void btnSubWindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubWindActionPerformed
+        if(btnSubPressure.getLabel() == "Subscribe"){
+            btnSubPressure.setText("Unsubscribe");
+            weather.subscribe(wind);
+            return;
+        }
+        else if(btnSubPressure.getLabel() == "Unsubscribe") {
+            btnSubPressure.setText("Subscribe");
+            weather.unsubscribe(wind);
+            return;
+        }
+    }//GEN-LAST:event_btnSubWindActionPerformed
+>>>>>>> origin/master
 
     /**
      * @param args the command line arguments
@@ -261,7 +292,7 @@ public class frmObserver extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -276,40 +307,38 @@ public class frmObserver extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(frmObserver.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new frmObserver().setVisible(true);
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(frmObserver.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                new frmObserver().setVisible(true);
+                weather.run();
             }
         });
     }
     
+    public void updateTextFields() {
+        for(int i = 0; i <= weather.getList().size()-1;i++) {
+            if(weather.getList().get(i).equals(WindSpeed.class))
+                tbWind.setText(Integer.toString(weather.getList().get(i).getValue()));
+            else if(weather.getList().get(i).equals(Pressure.class))
+                tbPressure.setText(Integer.toString(weather.getList().get(i).getValue()));
+        } 
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+<<<<<<< HEAD
     private javax.swing.JButton btnPittsburgh;
     private javax.swing.JButton btnPittsburgh1;
     private javax.swing.JButton btnPittsburgh2;
+=======
+    private javax.swing.JButton btnSubPressure;
+    private javax.swing.JButton btnSubWind;
+    private javax.swing.JLabel jLabel1;
+>>>>>>> origin/master
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JLabel lbGAVal;
-    private javax.swing.JLabel lbGFVal;
-    private javax.swing.JLabel lbGameVals;
-    private javax.swing.JLabel lbGamesPlayed;
-    private javax.swing.JLabel lbLossVal;
-    private javax.swing.JLabel lbLosses;
-    private javax.swing.JLabel lbLosses1;
-    private javax.swing.JLabel lbLosses2;
-    private javax.swing.JLabel lbLosses3;
-    private javax.swing.JLabel lbOTLVal;
-    private javax.swing.JLabel lbTeamName;
-    private javax.swing.JLabel lbTeamNameTitle;
-    private javax.swing.JLabel lbWinVal;
-    private javax.swing.JLabel lbWins;
-    private javax.swing.JList lstTeams;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JTextField tbPressure;
+    private javax.swing.JTextField tbWind;
     // End of variables declaration//GEN-END:variables
 }

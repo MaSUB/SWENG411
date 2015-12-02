@@ -1,0 +1,461 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package RTP_Client_Proto;
+
+/**
+ * This is a client meant to communicate with a server based on RTSP and RTP
+ * This client is being development in parallel to the server, features are subject to change
+ * 
+ * @author devon
+ */
+
+import  java.io.*;
+import  java.net.*;
+import  java.util.*;
+import  java.awt.*;
+import  java.awt.event.*;
+import  javax.swing.*;
+import  javax.swing.Timer;
+
+public class RTP_Client 
+{
+
+    //intialize the GUI
+    
+    JFrame f = new JFrame("MuZe Client");
+    JButton setupButton = new JButton("Setup");
+    JButton playButton = new JButton("Play");
+    JButton pauseButton = new JButton("Pause");
+    JButton tearButton = new JButton("Teardown");
+    JPanel mainPanel = new JPanel();
+    JPanel buttonPanel = new JPanel();
+    
+    
+    //TO DO: add variable for music...sourcedataline...???
+    
+    // RTP Variables
+    DatagramPacket rcvdp;               // UDP packet recieved from the server
+    DatagramSocket RTPSocket;           // Socket to send and recieve UDP packets
+    static int RTP_RCV_PORT = 25000;    //port where the client will receive the RTP packets
+    
+    Timer timer;    //time used for UDP packet data
+    byte[] buf;     //buffer used for data received from server
+    
+    
+    // RTSP variables
+    
+    //rtsp states
+    
+    final static int INIT = 0;
+    final static int READY = 1;
+    final static int PLAYING = 2;
+    final static int CLOSING = 3;
+    
+    
+    static int state;   //RTSP state == INIT or READY or PLAYING, this holds the current state of RTSP
+    
+    Socket RTSPsocket;
+    
+    //input and output stream filters
+    static BufferedReader RTSPBufferedReader;
+    static BufferedWriter RTSPBufferedWriter;
+    
+    static String SongFileName;        //song requested to be played from server
+    int RTSPSeqNb = 0;                 //sequence number of RTSP messages within the session
+    int RTSPid = 0;                    // ID of the RTSP session
+    
+    final static String CRLF = "\r\n";
+    
+    // Song Constants:
+    static int AUDIO_TYPE = 14;        // RTP payload type for MPEG 1 or MPEG2
+    
+    // Constructor 
+    public RTP_Client(){
+        //Build GUI
+        //---------
+        //Frame
+        f.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e){
+                System.exit(0);
+            }
+        });
+        
+        //Buttons
+        
+        buttonPanel.setLayout(new GridLayout(1,0));
+        buttonPanel.add(setupButton);
+        buttonPanel.add(playButton);
+        buttonPanel.add(pauseButton);
+        buttonPanel.add(tearButton);
+        
+        //TO DO
+        //implement these listener classes
+        
+        setupButton.addActionListener(new setupButtonListener());       //implement later
+        playButton.addActionListener(new playButtonListener());         //later
+        pauseButton.addActionListener(new pauseButtonListener());       //later...
+        tearButton.addActionListener(new tearButtonListener());         //I said later...
+        
+        
+        //TO DO
+        //initialize source data line in here...?
+        
+        
+        //frame layout
+        
+        mainPanel.setLayout(null);
+        mainPanel.add(buttonPanel);
+        
+        buttonPanel.setBounds(0,280,380,50);
+        
+        f.getContentPane().add(mainPanel, BorderLayout.CENTER);
+        f.setSize(new Dimension (390, 370));
+        f.setVisible(true);
+        
+        
+        //init timer
+        
+        //TO DO
+        //initialize this timer listener class
+        
+        timer = new Timer(20, new timerListener());                 //implement this later
+        timer.setInitialDelay(0);
+        timer.setCoalesce(true);
+        
+        buf = new byte[15000];              //15kb should be enough for now
+        
+    }
+    
+    public static void main (String argv[]) throws Exception
+    {
+        //create a new client object
+        RTP_Client aclient = new RTP_Client();
+        
+        
+        int RTSP_server_port = 554;                         //dummy values, may change later
+        String ServerHost = "wat.duh.lol@goatse.com";       //another dummy value
+        
+        InetAddress ServerIPAddr = InetAddress.getByName(ServerHost);
+        
+        //establish TCP connection with the server to exchange RTSP messages
+        
+        aclient.RTSPsocket = new Socket (ServerIPAddr, RTSP_server_port);
+        
+        RTSPBufferedReader = new BufferedReader(new InputStreamReader(aclient.RTSPsocket.getInputStream()));
+        RTSPBufferedWriter = new BufferedWriter(new OutputStreamWriter(aclient.RTSPsocket.getOutputStream()));
+        
+        //set initial state
+        state = INIT;
+    }
+    
+    //Method: parse server response
+    //reads in a the string response value from the server
+    //returns: reply code
+    private int parse_server_response()
+    {
+        int reply_code = 0;
+        
+        try
+        {
+            String StatusLine = RTSPBufferedReader.readLine();
+            
+            System.out.println("RTSP Client - Received from Server:");
+            System.out.println(StatusLine);
+            
+            StringTokenizer tokens = new StringTokenizer(StatusLine);
+            tokens.nextToken();                             //skip over the RTSP version
+            
+            reply_code = Integer.parseInt(tokens.nextToken());
+
+            //if reply code is OK, get and print next 2 lines
+            if (reply_code == 200)
+            {
+                String SeqNumLine = RTSPBufferedReader.readLine();
+                System.out.println(SeqNumLine);
+                
+                String SessionLine = RTSPBufferedReader.readLine();
+                System.out.println(SessionLine);
+                
+                if (state == INIT)
+                {
+                    tokens = new StringTokenizer(SessionLine);
+                    tokens.nextToken();         //skip over the session
+                    RTSPid = Integer.parseInt(tokens.nextToken());
+                }
+                
+                
+            }
+        }
+        
+        catch(Exception ex)
+        {
+            System.out.println("Exception caught: "+ex + "\n");
+            System.exit(0);
+        }
+        return(reply_code);
+    }
+    
+    
+    //TO DO
+    //THIS MIGHT BE FUCKED UP
+    //NOT QUITE SURE HOW TO SEND RTSP REQUESTS JUST YET
+    
+    private void send_RTSP_request(String request_type)
+    {
+        try
+        {
+            //warning this section is super hacky
+            //if it doesn't work, the issue is probably in here somewhere
+        
+            String requestLine = request_type + " " + SongFileName + " " + "RTSP/1.0\n";
+        
+            RTSPBufferedWriter.write(requestLine);
+            
+            String CseqLine = "Cseq: " + RTSPSeqNb + "\n";
+            
+            RTSPBufferedWriter.write(CseqLine);
+            
+            if (request_type == "SETUP")
+            {
+                String TransportLine = "Transport: rtp/udp;client_port=" + RTP_RCV_PORT + ";server_port=554";
+                RTSPBufferedWriter.write(TransportLine);
+            }
+            else
+            {
+                String SessionLine = "Session: " + RTSPid;
+                RTSPBufferedWriter.write(SessionLine);
+            }
+            RTSPBufferedWriter.write(CRLF);
+            
+            RTSPBufferedWriter.flush();
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Exception caught: "+ ex + "\n" );
+            System.exit(0);
+        }
+        
+        
+    }
+
+
+    //HANDLERS FOR BUTTONS
+    
+    //HANDLER FOR SETUP BUTTON
+    
+    class setupButtonListener implements ActionListener
+    {
+    
+        @Override
+        public void actionPerformed(ActionEvent ae) 
+        {
+            System.out.println("Setup Button pressed ! \n");
+            
+            if (state == INIT)
+            {
+                //init non-blocking RTPsocket that will be used to receive data
+                
+                try
+                {
+                  RTPSocket = new DatagramSocket(RTP_RCV_PORT);
+                  
+                  RTPSocket.setSoTimeout(5);                    //will wait 5ms before timing out and throwing exception
+                  
+                }
+                catch (SocketException se)
+                {
+                    System.out.println("Socket exception: " + se + "\n");
+                    System.exit(0);
+                }
+                
+                //init RTSP sequence number
+                RTSPSeqNb = 1;
+                
+                //send SETUP message to the server
+                send_RTSP_request("SETUP");
+                
+                //wait for the response
+                
+                if(parse_server_response() != 200)          //200 is code for OK
+                {
+                    System.out.println("Invalid Server Response \n");
+                    
+                }
+                
+                else
+                {
+                    state = READY;
+                    System.out.println("New RTSP state: " + state + "\n");
+                }
+            }
+            
+            //else if state != INIt then do nothing
+        }
+    }
+    
+    //HANDLER for Play button
+    
+    class playButtonListener implements ActionListener
+    {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) 
+        {
+           System.out.println("Play Button ressed ! \n");
+           
+           if (state == READY)
+           {
+               RTSPSeqNb++;                 //increase RTSP sequence number
+               
+               send_RTSP_request("PLAY");   //send message to the server
+               
+               //wait for response
+               
+               if (parse_server_response() != 200)
+               {
+                   System.out.println("Invalid Server Response\n");
+               }
+               else
+               {
+                   state = PLAYING;
+                   System.out.println("New RTSP state: " + state + "\n");
+                   
+                   //start the timer
+                   timer.start();
+               }
+            
+           }
+           
+           //else if state != READY then do nothing
+        }
+        
+    }
+    
+    //HANDLER for pause button
+    
+    class pauseButtonListener implements ActionListener
+    {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) 
+        {
+            System.out.println("Pause button pressed ! \n");
+            
+            if (state == PLAYING)
+            {
+                RTSPSeqNb++;            //increase RTSP sequence number
+                
+                send_RTSP_request("PAUSE");
+                
+                //wait for response
+                
+                if (parse_server_response() != 200)
+                {
+                    System.out.println("Invalid Server Response \n");
+                }
+                
+                else
+                {
+                    state = READY;
+                    System.out.println("New RTSP State " + state + "\n" );
+                    
+                    //stop the timer
+                    timer.stop();
+                }
+            }
+        }
+        
+    }
+    
+    //HANDLER for TearDown button
+    
+    class tearButtonListener implements ActionListener
+    {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) 
+        {
+           System.out.println("Teardown Button pressed ! \n");
+           
+           RTSPSeqNb++;             //increase RTSP sequence number
+           
+           //send TEARDOWN message to the server
+           
+           send_RTSP_request("TEARDOWN");
+           
+           //wait for the response
+           
+           if (parse_server_response() != 200)
+           {
+               System.out.println("Invalid Server response \n");
+           }
+           else
+           {
+               state = CLOSING;
+               
+               System.out.println("New RTSP state: " + state + "\n");
+               
+               //stop the timer
+               timer.stop();
+               
+               //exit
+               System.exit(0);
+           }
+        }
+        
+    }
+    
+    //HANDLER for timer
+    //This is where the music shit happens
+    //probably need a source data line for this
+    
+    //right now it won't do anything music related
+    class timerListener implements ActionListener
+    {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) 
+        {
+            rcvdp = new DatagramPacket(buf, buf.length);
+            
+            try
+            {
+                RTPSocket.receive(rcvdp);
+                
+                //create RTP packet ovject from the DP
+                
+                RTPpacket rtp_packet = new RTPpacket(rcvdp.getData(), rcvdp.getLength());
+                
+                //print important head files of the RTP packet received:
+                System.out.println("got RTP packet with SeqNum # "+ rtp_packet.getsequencenumber() + " TimeStamp " + rtp_packet.gettimestamp() + "ms \n");
+                
+                
+                //print header bitstream
+                rtp_packet.printheader();
+                
+                //get the payload bitstream for the RTPpacket object
+                int payload_length = rtp_packet.getpayload_length();
+                byte [] payload = new byte[payload_length];
+                
+                rtp_packet.getpayload(payload);
+                
+                //from here, you would do music stuff with this payload byte array
+                //I haven't gotten to that yet so for now it does nothing
+                
+            }
+            catch (InterruptedIOException iioe)
+            {
+                System.out.println("Nothing to read\n");
+            }
+            catch (IOException ioe)
+            {
+                System.out.println("Exception caught: " + ioe + "\n");
+            }
+            
+        }
+        
+    }
+}
