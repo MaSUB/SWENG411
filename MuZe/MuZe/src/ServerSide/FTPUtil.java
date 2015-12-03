@@ -1,8 +1,13 @@
 package ServerSide;
 
 import Exceptions.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
  
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -42,6 +47,7 @@ public class FTPUtil {
     private FTPClient client = new FTPClient();
     private int reply;
     private InputStream inStream;
+    private String local;
  
     ///////////////////////////////////////////////////////////////////////////
     //
@@ -180,6 +186,33 @@ public class FTPUtil {
         }
     }
     
+    public void uploadFile(String saveFile) throws FTPException {
+        
+        boolean success;
+        try {
+            success = client.setFileType(FTP.BINARY_FILE_TYPE);
+            
+            if(!success) {
+            
+                throw new FTPException("Unable to set binary type to file.");
+                
+            }
+            
+            inStream = new FileInputStream(saveFile);
+            
+            client.storeFile(saveFile, inStream);
+            
+            
+        } catch (IOException ex) {
+            
+            throw new FTPException("File may not exist or error when handling "
+            +   "file IO: " + ex.getMessage());
+            
+        }
+        
+        
+    }
+    
     ///////////////////////////////////////////////////////////////////////////
     //
     //  This method makes sure that the download or upload when finished 
@@ -210,8 +243,7 @@ public class FTPUtil {
                 if (!client.logout())
                     throw new FTPException("Unable to logout correctly.");
                 
-                else
-                    client.disconnect();
+                client.disconnect();
                 
                 
             } catch (IOException ex) {
