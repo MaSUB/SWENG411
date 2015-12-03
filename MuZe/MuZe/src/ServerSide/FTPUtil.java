@@ -20,29 +20,36 @@ import org.apache.commons.net.ftp.FTPReply;
 ///////////////////////////////////////////////////////////////////////////////
 public class FTPUtil {
  
+    ///////////////////////////////////////////////////////////////////////////
+    //
     //  These attributes are used to connect the client to the server.
     //  host represents the host Server's IP/Web address, the portNum is the
     //  port number, username and password are used to log into the server.
     //  
-    private String host;
-    private int portNum;
-    private String username;
-    private String password;
+    ///////////////////////////////////////////////////////////////////////////
+    private final String    host;
+    private final int       portNum;
+    private final String    username;
+    private final String    password;
  
-    
+    ///////////////////////////////////////////////////////////////////////////
+    //
     //  The FTPClient class is used from the apache.commons.net libray's this
     //  makes connecting to a server and creating a client FTP very easy to 
     //  understand and straight forward.
     //
+    ///////////////////////////////////////////////////////////////////////////
     private FTPClient client = new FTPClient();
     private int reply;
     private InputStream inStream;
  
-    
+    ///////////////////////////////////////////////////////////////////////////
+    //
     //  When creating a new instance of the FTPUtil, it needs to be passed the
     //  host ip/webaddress, port#, username and password. This is needed to
     //  connect to the server.
     //  
+    ///////////////////////////////////////////////////////////////////////////
     public FTPUtil(String h, int p, String u, String pass) {
         
         this.host = h;
@@ -51,12 +58,16 @@ public class FTPUtil {
         this.password = pass;
         
     }
- 
+    
+    
+    ///////////////////////////////////////////////////////////////////////////
+    //
     //  connect:
     //      This method is used to connect the client/host machine to the FTP
     //      Server. The host, portNum, username, and password are needed in
     //      order for this to function without exception.
     //  
+    ///////////////////////////////////////////////////////////////////////////
     public void connect() throws FTPException {
         
         try {
@@ -88,12 +99,23 @@ public class FTPUtil {
             
         }
     }
- 
     
+    
+    ///////////////////////////////////////////////////////////////////////////
     //
+    //  getFileSize:
+    //      This message asks the server for the file specified in the filePath 
+    //      string's length of file. The client asks for the list of files in 
+    //      the specified directory. 
+    //      
+    //      If the file attribute is set to be null after this, then the file
+    //      may not exist or be located in the passed filePath.
     //
+    //      IF the file does exist however, the FTPClient class can invoke a
+    //      method that gets the size of the file. This needs to be in the 
+    //      'long' attribute type since it could be an extremely large file. 
     //
-    //
+    ///////////////////////////////////////////////////////////////////////////
     public long getFileSize(String filePath) throws FTPException {
         
         try {
@@ -106,27 +128,40 @@ public class FTPUtil {
                 throw new FTPException("404 file not found.");
                 
             }
+            
             return file.getSize();
+            
         } catch (IOException ex) {
+            
             throw new FTPException("Unable to calculate file size: " 
                     + ex.getMessage());
+            
         }
     }
- 
-    /**
-     * Start downloading a file from the server
-     *
-     * @param downloadPath
-     *            Full path of the file on the server
-     * @throws FTPException
-     *             if client-server communication error occurred
-     */
+    
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    //  downloadFile:
+    //      downloading the file sends the file through a binary file type. If
+    //      setting the file you wish to download can not be converted to a
+    //      binary file, may god have mercy on your soul, but really it will
+    //      throw an exception. This exception will just display the problem
+    //      in a VERY brief message.
+    //  
+    //      the inStream is then set equal to the incoming file which is 
+    //      determined by the downloadPath attribute, this is used for the
+    //      servers location of the file to be downloaded.
+    //      
+    //      If the inStream turns up to be null. then either the file does not 
+    //      exist or there was an error when sending the data from the server.
+    //
+    ///////////////////////////////////////////////////////////////////////////
     public void downloadFile(String downloadPath) throws FTPException {
         try {
  
             boolean success = client.setFileType(FTP.BINARY_FILE_TYPE);
             if (!success) {
-                throw new FTPException("Could not set binary file type.");
+                throw new FTPException("Unable to set binary type to file.");
             }
  
             inStream = client.retrieveFileStream(downloadPath);
@@ -134,7 +169,7 @@ public class FTPUtil {
             if (inStream == null) {
                 
                 throw new FTPException("Unable to open inStream. File may not "
-                                        + "be available.");
+                                        + "be available or exist.");
                 
             }
             
@@ -144,35 +179,56 @@ public class FTPUtil {
             
         }
     }
- 
-    //  
-    //  
-    //  
+    
+    ///////////////////////////////////////////////////////////////////////////
     //
+    //  This method makes sure that the download or upload when finished 
+    //  completely closes the inStream and is sure that the client is not
+    //  currently working on a project, if it is then it will complete that
+    //  command.
+    //
+    ///////////////////////////////////////////////////////////////////////////
     public void finish() throws IOException {
+        
         inStream.close();
         client.completePendingCommand();
+        
     }
- 
-    /**
-     * Log out and disconnect from the server
-     */
+    
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    //  This ends the current connection that the client has to the server. If 
+    //  the client is not connected to the server, do nothing.
+    //  
+    ///////////////////////////////////////////////////////////////////////////
     public void disconnect() throws FTPException {
+        
         if (client.isConnected()) {
+            
             try {
-                if (!client.logout()) {
-                    throw new FTPException("Could not log out from the server");
-                }
-                client.disconnect();
+                
+                if (!client.logout())
+                    throw new FTPException("Unable to logout correctly.");
+                
+                else
+                    client.disconnect();
+                
+                
             } catch (IOException ex) {
-                throw new FTPException("Error disconnect from the server: "
+                
+                throw new FTPException("Error when discontecting from server: "
                         + ex.getMessage());
+                
             }
         }
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////
+    //
     //  Simple getter for the InputStream.
     //
+    ///////////////////////////////////////////////////////////////////////////
     public InputStream getInStream() {
         
         return inStream;
