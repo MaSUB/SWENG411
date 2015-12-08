@@ -24,7 +24,7 @@ public final class VolumeControl
 
         for (Mixer.Info mixerInfo : mixers)
         {
-            if(!mixerInfo.getName().equals("Java Sound Audio Engine")) continue;
+            if(!mixerInfo.getName().equals("PCH [plughw:0,0]")) continue;
 
             Mixer mixer         = AudioSystem.getMixer(mixerInfo);
             Line.Info[] lines   = mixer.getSourceLineInfo();
@@ -60,8 +60,8 @@ public final class VolumeControl
                 FloatControl control = (FloatControl)line.getControl(FloatControl.Type.MASTER_GAIN);
                 control.setValue(limit(control,level));
             }
-            catch (LineUnavailableException e) { continue; }
-            catch(java.lang.IllegalArgumentException e) { continue; }
+            catch (LineUnavailableException e) { System.out.println("Line is unavailable"); continue; }
+            catch(java.lang.IllegalArgumentException e) {System.out.println("Illegal argument");continue; }
 
 
 

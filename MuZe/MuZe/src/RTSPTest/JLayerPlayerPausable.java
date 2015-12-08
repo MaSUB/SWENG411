@@ -31,6 +31,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.Decoder;
@@ -208,7 +215,7 @@ public class JLayerPlayerPausable{
 			this.audioDevice.flush();
 
 			synchronized (this){
-				this.complete = (this.closed == false);
+				this.complete = true;
 				this.close();
 			}
 
@@ -370,7 +377,7 @@ public class JLayerPlayerPausable{
 		return stopped;
 	}
 	
-	/*public FloatControl getFloatControl() throws JavaLayerException{
+        public FloatControl getFloatControl() throws JavaLayerException{
 		FloatControl controleVolume = null;
 		SourceDataLine source = null;
 		AudioFormat fmt = null;
@@ -419,7 +426,9 @@ public class JLayerPlayerPausable{
         	}
         }
         return controleVolume;
-	}*/
+	}
+
+	
 
 
 	// inner classes

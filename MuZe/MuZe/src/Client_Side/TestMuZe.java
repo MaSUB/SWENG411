@@ -46,7 +46,7 @@ public class TestMuZe extends javax.swing.JFrame {
     
     //RTSP variables
     //----------------
-    //rtsp states
+    //rtsp states 
     final static int INIT = 0;
     final static int READY = 1;
     final static int PLAYING = 2;
@@ -54,15 +54,6 @@ public class TestMuZe extends javax.swing.JFrame {
     static int state;                   //RTSP state == INIT or READY or PLAYING
     //private Socket RTSPsocket;                  //socket used to send/receive RTSP messages
     //input and output stream filters
-    
-    
-    //  FTP variables
-    //  
-    //  
-    //  Cool comments and such.
-    FTPDownload download;
-    DownloadGUI dlGui;
-    
     static BufferedReader RTSPBufferedReader;
     static BufferedWriter RTSPBufferedWriter;
   
@@ -75,7 +66,7 @@ public class TestMuZe extends javax.swing.JFrame {
     private static final String ARCHIVE_MP3_TEMPORARY = "music.mp3";
     final static String CRLF = "\r\n";
     
-    static StreamProcessor sp;          //thread that will run and receive the RTP stream
+    static StreamProcessorHost sp;          //thread that will run and receive the RTP stream
     
     private static FileOutputStream fileoutput;
 
@@ -314,48 +305,60 @@ public class TestMuZe extends javax.swing.JFrame {
     }//GEN-LAST:event_PauseButtonActionPerformed
 
     private void jSlider1CaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_jSlider1CaretPositionChanged
-       VolumeControl.setVolume((float)jSlider1.getValue()/100);
+       
     
     }//GEN-LAST:event_jSlider1CaretPositionChanged
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
-        // TODO add your handling code here:
-        VolumeControl.setVolume((float)jSlider1.getValue()/100);
-        
-    }//GEN-LAST:event_jSlider1StateChanged
-
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        // TODO add your handling code here:
-        send_RTSP_request("TEARDOWN");
-    }//GEN-LAST:event_formWindowClosed
-
-    private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skipButtonActionPerformed
-        // TODO add your handling code here:
-        sp.kill();
-        RTSPSeqNb++;
-        send_RTSP_request("STOP");
-        
-       /* try
+        try
         {
-            if (parse_server_response() != 200)            
-            {
-                System.out.println("invalid server response");
-            }
-            
-           
-        } catch (Exception ex)
+            sp.setVolume((float)jSlider1.getValue() / 100);
+        } catch (JavaLayerException ex)
         {
             Logger.getLogger(TestMuZe.class.getName()).log(Level.SEVERE, null, ex);
         }
-       */
-      
+    }//GEN-LAST:event_jSlider1StateChanged
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        
+        send_RTSP_request("TEARDOWN");
+        
+    }//GEN-LAST:event_formWindowClosed
+
+    private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skipButtonActionPerformed
+        
+        sp.kill();
+        RTSPSeqNb++;
+        send_RTSP_request("STOP");
+        try
+        {
+            Thread.sleep(500);            
+            /*try
+            {
+            if (parse_server_response() != 200)
+            {
+            System.out.println("invalid server response");
+            }
+            
+            
+            
+            } catch (Exception ex)
+            {
+            Logger.getLogger(TestMuZe.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            */
+        } catch (InterruptedException ex)
+        {
+            Logger.getLogger(TestMuZe.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
       
     }//GEN-LAST:event_skipButtonActionPerformed
 
     private void DownloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DownloadButtonActionPerformed
-        
-        dlGui = new DownloadGUI();
-        
+
+        DownloadGUI dlGui = new DownloadGUI();
+        dlGui.show();
     }//GEN-LAST:event_DownloadButtonActionPerformed
 
     /**
@@ -371,7 +374,7 @@ public class TestMuZe extends javax.swing.JFrame {
             */
             try {
                 for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                    if ("Windows".equals(info.getName())){
+                    if ("Windows".equals(info.getName())) {
                         javax.swing.UIManager.setLookAndFeel(info.getClassName());
                         break;
                     }
@@ -424,7 +427,7 @@ public class TestMuZe extends javax.swing.JFrame {
                 tempdirectory.mkdir();
                 tempdirectory = null;
             }
-            fileoutput = new FileOutputStream(DIRECTORY_ARCHIVE_TEMPORARY  + ARCHIVE_MP3_TEMPORARY);
+            //fileoutput = new FileOutputStream(DIRECTORY_ARCHIVE_TEMPORARY  + ARCHIVE_MP3_TEMPORARY);
             
             //send setup to the server
             RTPsocket = new DatagramSocket(RTP_RCV_PORT);
@@ -447,8 +450,10 @@ public class TestMuZe extends javax.swing.JFrame {
                 //change RTSP state and print new state
                 state = READY;
             }
-            for (int i = 1; i < playlist.size(); i++)
+            int i = 0;
+            while (true)
             {
+                
                 if (state == READY) 
                 {
           
@@ -466,36 +471,37 @@ public class TestMuZe extends javax.swing.JFrame {
                     {
                         //read the mp3 tags
                         
-                        String line = RTSPBufferedReader.readLine();
-                        if (line != null)
-                            artistLabel.setText(line);
-                        line = RTSPBufferedReader.readLine();
-                        if(line != null)
-                            songLabel.setText(line);
-                        line = RTSPBufferedReader.readLine();
-                        if(line != null)
-                            albumLabel.setText(line);
+                        //String line = RTSPBufferedReader.readLine();
+                        //if (line != null)
+                            //artistLabel.setText(line);
+                        //line = RTSPBufferedReader.readLine();
+                        //if(line != null)
+                            //songLabel.setText(line);
+                        //line = RTSPBufferedReader.readLine();
+                        //if(line != null)
+                            //albumLabel.setText(line);
                         
                         //change RTSP state and print out new state
                         state=PLAYING;
                   
-                        sp = new StreamProcessor(RTPsocket);            //creqte new stream processor thread
+                        sp = new StreamProcessorHost(RTPsocket);            //creqte new stream processor thread
+                        Thread.sleep(200);
                         sp.start();
                         sp.join();                                      //wait for stream to get done playing 
                         System.out.println("Joining back to the main");
                         state = READY;
                  
                     }
+                    SongFileName = playlist.get(i % playlist.size());                         //grab the title of the next song in the playlist
+                    i++;
                 }
-                SongFileName = playlist.get(i);                         //grab the title of the next song in the playlist
+                
             }
             
         } catch (Exception ex) {
             Logger.getLogger(TestMuZe.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
+
     }
     
   /*

@@ -68,7 +68,7 @@ public class Host{
   final static String CRLF = "\r\n";
   private static long tamanhoactual;
   
-  static StreamProcessor sp;
+  static StreamProcessorHost sp;
   
   private static int filecount = 0;
   
@@ -221,7 +221,7 @@ public class Host{
                   //change RTSP state and print out new state
                   state=PLAYING;
                   
-                  sp = new StreamProcessor(RTPsocket);
+                  sp = new StreamProcessorHost(RTPsocket);
                   sp.start();
                   sp.join();
                   System.out.println("Playback finished");
@@ -256,7 +256,7 @@ public class Host{
                   //change RTSP state and print out new state
                   state=PLAYING;
                   
-                  sp = new StreamProcessor(RTPsocket);
+                  sp = new StreamProcessorHost(RTPsocket);
                   sp.start();
                   sp.join();
                   System.out.println("Playback finished");
@@ -358,7 +358,7 @@ public class Host{
                   //change RTSP state and print out new state
                   state=PLAYING;
                   
-                  sp = new StreamProcessor(RTPsocket);
+                  sp = new StreamProcessorHost(RTPsocket);
                   sp.start();
                   // System.out.println("New RTSP state: ...")
                   

@@ -1,5 +1,7 @@
 package RTSPtest;
 
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.PlaybackListener;
 
@@ -131,9 +133,7 @@ public class Mp3Player implements Runnable{
 		}
 	}
 	
-	/*public FloatControl getFloatControl() throws JavaLayerException{
-		return player.getFloatControl();
-	}*/
+	
 
 	// IRunnable members
 	/* (non-Javadoc)
@@ -147,6 +147,11 @@ public class Mp3Player implements Runnable{
 		catch (javazoom.jl.decoder.JavaLayerException ex){
 			ex.printStackTrace();
 		}
+	}
+        
+        //get the float control object associated with the volume of the player
+        public FloatControl getFloatControl() throws JavaLayerException{
+		return player.getFloatControl();
 	}
 	
 	/* Classe com os listeners de execucao da musica

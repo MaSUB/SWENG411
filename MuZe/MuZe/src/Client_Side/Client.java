@@ -22,7 +22,7 @@ public class Client extends javax.swing.JFrame {
     static Socket RTSPsocket;
     static DatagramSocket RTPsocket;
     static int RTP_RCV_PORT = 5544;
-    StreamProcessor sp;
+    StreamProcessorHost sp;
     /**
      * Creates new form Client
      */
@@ -72,7 +72,7 @@ public class Client extends javax.swing.JFrame {
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
         try {
-            sp = new StreamProcessor(RTPsocket);
+            sp = new StreamProcessorHost(RTPsocket);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }

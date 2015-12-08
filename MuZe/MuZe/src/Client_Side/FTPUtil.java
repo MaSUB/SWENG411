@@ -227,6 +227,7 @@ public class FTPUtil {
         
         inStream.close();
         client.completePendingCommand();
+        client.disconnect();
         
     }
     
@@ -241,10 +242,8 @@ public class FTPUtil {
         if (client.isConnected()) {
             
             try {
-                
-                if (!client.logout())
+                if(!client.logout())
                     throw new FTPException("Unable to logout correctly.");
-                
                 client.disconnect();
                 
                 
@@ -285,4 +284,6 @@ public class FTPUtil {
         return null;
     }
 }
+
+
 

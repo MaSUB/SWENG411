@@ -163,7 +163,6 @@ public class Server extends JFrame implements ActionListener {
     videoqueue.add("test.mp3");
     videoqueue.add("test2.mp3");
     
-    
     songfile = new MP3Object(videoqueue.get(queueindex));
     
     StreamSender sender = new StreamSender(connectedClients);
@@ -210,20 +209,20 @@ public class Server extends JFrame implements ActionListener {
           {
             //send back response
             theServer.send_RTSP_response();
-            sender = new StreamSender(connectedClients);
-
-
-
-
-
-            sender.setSong(songfile);
-            theServer.send_MP3_Tags();
-            sender.start();
-
-            state = PLAYING;
-            System.out.println("New RTSP state: PLAYING");
-            queueindex++;
-            songfile = new MP3Object(videoqueue.get(queueindex % videoqueue.size()));
+                sender = new StreamSender(connectedClients);
+        
+            
+                
+                
+                
+                sender.setSong(songfile);
+                //theServer.send_MP3_Tags();
+                sender.start();
+                
+                state = PLAYING;
+                System.out.println("New RTSP state: PLAYING");
+                queueindex++;
+                songfile = new MP3Object(videoqueue.get(queueindex % videoqueue.size()));
                 
                 
             
@@ -461,7 +460,11 @@ public class Server extends JFrame implements ActionListener {
                 t = new Thread(this, threadname);
                 t.start();
                 
-            }     
+            }
+                
         }
+    
+        
+    
     }
 }

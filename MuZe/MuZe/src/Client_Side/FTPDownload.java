@@ -45,6 +45,10 @@ public class FTPDownload extends SwingWorker<Void, Void> {
         dlGui       = gui;
                 
     }
+
+    FTPDownload() {
+        dlGui = new DownloadGUI();
+    }
     
     @Override
     protected Void doInBackground() throws Exception {
@@ -56,29 +60,22 @@ public class FTPDownload extends SwingWorker<Void, Void> {
             ftp.connect();
             
             byte[]              buffer = new byte[BUFFER_SIZE];
-            int                 bytes;
-            long                totalBytes;
-            int                 percentDone;
-            long                fileLength;
+            int                 bytes = -1;
+            long                totalBytes = 0;
+            int                 percentDone = 0;
+            long                fileLength = ftp.getFileSize(dlPath);
+            
             String              fileName;
             File                dlFile;
             FileOutputStream    fileOut;
-            InputStream         fileIn;
+            InputStream         fileIn;  
             
-            bytes       =  -1;
-            totalBytes  =   0;
-            percentDone =   0;
-            fileLength  =   ftp.getFileSize(dlPath);
-            
-            //  Change the GUI interfaces file size feild.
             
             fileName    =   new File(dlPath).getName();
             dlFile      =   new File(savePath + File.separator + fileName);
             fileOut     =   new FileOutputStream(dlFile);
             
-            ftp.downloadFile(fileName);
-            ftp.connect();
-            
+            ftp.downloadFile(dlPath);           
             fileIn      =   ftp.getInStream();
             
             ///////////////////////////////////////////////////////////////////
@@ -93,7 +90,7 @@ public class FTPDownload extends SwingWorker<Void, Void> {
                 
                 fileOut.write(buffer,0 ,bytes);
                 totalBytes = bytes + totalBytes;
-                percentDone = (int)(totalBytes*100/fileLength);
+                percentDone = (int) (totalBytes * 100 / fileLength);
                 setProgress(percentDone);
                 
             }
@@ -107,6 +104,7 @@ public class FTPDownload extends SwingWorker<Void, Void> {
             ///////////////////////////////////////////////////////////////////
 
             fileOut.close();
+            fileIn.close();
             ftp.finish();
             
             
@@ -127,14 +125,13 @@ public class FTPDownload extends SwingWorker<Void, Void> {
             setProgress(0);
             cancel(true);
             
-        } finally {
-            
-            ftp.disconnect();
-            
         }
-        
-        
+        finally{  
+        ftp.disconnect();
+        }
         return null;
+
+        
         
     }
     

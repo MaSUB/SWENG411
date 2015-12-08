@@ -24,19 +24,17 @@ public class JFilePicker extends JPanel {
 	public static final int MODE_OPEN = 1;
 	public static final int MODE_SAVE = 2;
 	
-	public JFilePicker(String textFieldLabel, String buttonLabel) {
-		this.textFieldLabel = textFieldLabel;
-		this.buttonLabel = buttonLabel;
+	public JFilePicker() {
 		
 		fileChooser = new JFileChooser();
 		
 		setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
 		// creates the GUI
-		label = new JLabel(textFieldLabel);
+		label = new JLabel("Save Directory:");
 		
 		textField = new JTextField(30);
-		button = new JButton(buttonLabel);
+		button = new JButton("Browse");
 		
 		button.addActionListener(new ActionListener() {
 			@Override
