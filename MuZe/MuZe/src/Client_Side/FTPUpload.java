@@ -4,7 +4,8 @@ import Exceptions.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
+
  
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -27,34 +28,74 @@ public class FTPUpload extends SwingWorker<Void, Void> {
     private String password;
     
     private String uploadPath;
+    private File upFile;
     
-    DownloadGUI dlGui;
-    FTPUtil ftp;
-    
-    FTPUpload(String h, int p, String u, String pass, String up,
-                        DownloadGUI gui){
+    public FTPUpload(String h, int p, String u, String pass, File f){
         
         host = h;
         port = p;
         username = u;
         password = pass;
-        uploadPath = up;
-        dlGui = gui;
+        upFile = f;
         
     }
     
     @Override
-    protected Void doInBackground() throws Exception {
+    public Void doInBackground() throws IOException, FTPException {
         
-        ftp = new FTPUtil(host, port,username,password);
+        FTPUtil ftp = new FTPUtil(host,port,username,password);
         
-            try(InputStream input = new FileInputStream(new File(uploadPath))){
-            this.ftp.getClient().storeFile("_", input);
+        try{
+            
+            ftp = new FTPUtil(host,port,username,password);  
+            ftp.uploadFile(upFile);
+            
+            FileInputStream input = new FileInputStream(upFile);
+            
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytes = - 1;
+            long totalBytes = 0;
+            int percentFinished = 0;
+            long fileLength = upFile.length();
+            
+            while((bytes = input.read(buffer)) != -1) {
+                
+               ftp.writeFileBytes(buffer, 0, bytes);
+               totalBytes = totalBytes + bytes;
+               percentFinished = (int)(totalBytes * 100 / fileLength);
+               setProgress(percentFinished);
+               
+            }
+            
+            input.close();
+  
+            ftp.finish();
+        
+        
+        } catch (FTPException ex) {        
+            JOptionPane.showMessageDialog(null, "Error uploading: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);           
+            ex.printStackTrace();
+            setProgress(0);
+            cancel(true);     
+        }  
+        finally{
+            ftp.disconnect();  
         }
         
-            
-       return null;
+        return null;
        
+    }
+    
+    @Override
+    public void done() {
+        
+        if (!isCancelled()) {
+            
+            JOptionPane.showMessageDialog(null,  "File has been Uploaded "
+                    + "successfully.", "Success",
+                    JOptionPane.INFORMATION_MESSAGE); 
+        }
     }
     
     

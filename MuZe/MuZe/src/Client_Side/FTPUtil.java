@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
  
@@ -47,6 +48,7 @@ public class FTPUtil {
     private FTPClient client = new FTPClient();
     private int reply;
     private InputStream inStream;
+    private OutputStream outStream;
     private String local;
  
     ///////////////////////////////////////////////////////////////////////////
@@ -188,31 +190,29 @@ public class FTPUtil {
         }
     }
     
-    public void uploadFile(String saveFile) throws FTPException {
+    public void uploadFile(File upFile) throws FTPException, IOException {
         
-        boolean success;
-        try {
-            success = client.setFileType(FTP.BINARY_FILE_TYPE);
+            try {
+            client.connect(host, portNum);
+            client.login(username, password);
+            boolean success = client.setFileType(FTP.BINARY_FILE_TYPE);      
             
-            if(!success) {
-            
-                throw new FTPException("Unable to set binary type to file.");
-                
+            if (!success) {
+                throw new FTPException("Could not set binary file type.");
             }
             
-            inStream = new FileInputStream(saveFile);
-            
-            client.storeFile(saveFile, inStream);
-            
-            
+            outStream = client.storeFileStream(upFile.getName());
+             
         } catch (IOException ex) {
-            
-            throw new FTPException("File may not exist or error when handling "
-            +   "file IO: " + ex.getMessage());
-            
+            throw new FTPException("Error uploading file: " + ex.getMessage());
         }
         
         
+    }
+    
+    public void writeFileBytes(byte[] bytes, int offset, int length)
+            throws IOException {
+        outStream.write(bytes, offset, length);
     }
     
     ///////////////////////////////////////////////////////////////////////////
@@ -225,7 +225,10 @@ public class FTPUtil {
     ///////////////////////////////////////////////////////////////////////////
     public void finish() throws IOException {
         
-        inStream.close();
+        if(inStream != null)
+            inStream.close();
+        if(outStream != null)
+            outStream.close();
         client.completePendingCommand();
         client.disconnect();
         

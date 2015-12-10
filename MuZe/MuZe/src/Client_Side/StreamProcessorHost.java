@@ -102,7 +102,7 @@ public class StreamProcessorHost implements Runnable
                 
                 
                 
-                if((player == null && actualsize >=   20000) ||( (player != null) && (player.isComplete() && actualsize > 15000)))
+                if((player == null && actualsize >=   20000))
                 {
                     
                     player = new Mp3Player(Directory_Archive +Temp_mp3_archive);

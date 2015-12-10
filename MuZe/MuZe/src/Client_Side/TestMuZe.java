@@ -5,6 +5,7 @@
  */
 package Client_Side;
 
+import UserInterface.DownloadGUI;
 import RTSPtest.Mp3Player;
 import RTSPtest.RTPpacket;
 import java.io.*;
