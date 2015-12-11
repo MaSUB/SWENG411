@@ -5,7 +5,6 @@
  */
 package Client_Side;
 
-import UserInterface.DownloadGUI;
 import RTSPtest.Mp3Player;
 import RTSPtest.RTPpacket;
 import java.io.*;
@@ -37,7 +36,7 @@ import javazoom.jl.decoder.JavaLayerException;
 public class TestMuZe extends javax.swing.JFrame {
 
     //Thread that will take care of updating playlist
-    static PlaylistManager pmanager;
+    static ChatManager pmanager;
 
     //RTP variables:
     //----------------
@@ -311,13 +310,14 @@ public class TestMuZe extends javax.swing.JFrame {
     }//GEN-LAST:event_jSlider1CaretPositionChanged
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
-        try
+       /* try
         {
             sp.setVolume((float)jSlider1.getValue() / 100);
         } catch (JavaLayerException ex)
         {
             Logger.getLogger(TestMuZe.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
     }//GEN-LAST:event_jSlider1StateChanged
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed

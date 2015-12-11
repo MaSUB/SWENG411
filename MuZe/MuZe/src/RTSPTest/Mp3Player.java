@@ -150,8 +150,8 @@ public class Mp3Player implements Runnable{
 	}
         
         //get the float control object associated with the volume of the player
-        public FloatControl getFloatControl() throws JavaLayerException{
-		return player.getFloatControl();
+        public FloatControl getFloatControl(float f) throws JavaLayerException{
+		return player.getFloatControl(f);
 	}
 	
 	/* Classe com os listeners de execucao da musica

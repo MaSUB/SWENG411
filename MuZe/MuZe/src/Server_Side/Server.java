@@ -12,7 +12,6 @@ package Server_Side;
 
 
 import RTSPtest.MP3Object;
-import RTSPtest.RTPpacket;
 import java.io.*;
 import java.net.*;
 import java.awt.*;
@@ -26,7 +25,7 @@ import org.farng.mp3.MP3File;
 import org.farng.mp3.TagException;
 import org.farng.mp3.id3.ID3v1;
 
-public class Server extends JFrame implements ActionListener {
+public class Server extends JFrame  {
     
   //list of senders for multiple clients
   private static ArrayList<Socket> connectedClients;
@@ -56,6 +55,7 @@ public class Server extends JFrame implements ActionListener {
   private static ArrayList<String> videoqueue;         //arraylist to hold list of songs to play
   private static int queueindex = 0;
   static MP3Object songfile;
+  private static String directory = "./Server_Songs";
   
   static int FRAME_PERIOD = 10; //Frame period of the video to stream, in ms
   static int VIDEO_LENGTH = 500; //length of the video in frames
@@ -88,7 +88,7 @@ public class Server extends JFrame implements ActionListener {
   final static String CRLF = "\r\n";
   
   //broadcaster to update clients on current playlist
-  static PlaylistBroadcaster pb;
+  static ChatBroadcaster pb;
 
   static boolean currentlystreaming = true;
   //--------------------------------
@@ -99,10 +99,7 @@ public class Server extends JFrame implements ActionListener {
     //init Frame
     super("Server");
 
-    //init Timer
-    timer = new Timer(FRAME_PERIOD, this);
-    timer.setInitialDelay(0);
-    timer.setCoalesce(true);
+    
 
     currentlystreaming = false;
     //allocate memory for the sending buffer
@@ -147,6 +144,7 @@ public class Server extends JFrame implements ActionListener {
     //Initiate TCP connection with the client for the RTSP session
     listenSocket = new ServerSocket(RTSPport);
     theServer.RTSPsocket = listenSocket.accept();
+    pb = new ChatBroadcaster();
     
 
     //Get Client IP address
@@ -159,13 +157,23 @@ public class Server extends JFrame implements ActionListener {
     //Initiate RTSPstate
     state = INIT;
     
-    //JUST FOR TESTING: add something to the queue alread
-    videoqueue.add("test.mp3");
-    videoqueue.add("test2.mp3");
+    
+    File [] files;
+    files = new File(directory).listFiles();
+    for (File file : files)
+    {
+        if (file.isFile())
+        {
+            videoqueue.add(file.getCanonicalPath());
+        }
+    }
+    //videoqueue.add("test.mp3");
+    //videoqueue.add("test2.mp3");
     
     songfile = new MP3Object(videoqueue.get(queueindex));
     
     StreamSender sender = new StreamSender(connectedClients);
+    
     //Set input and output stream filters:
     
     RTSPBufferedReader = new BufferedReader(new InputStreamReader(theServer.RTSPsocket.getInputStream()) );
@@ -189,10 +197,6 @@ public class Server extends JFrame implements ActionListener {
             //Send response
             theServer.send_RTSP_response();
    
-            //init the VideoStream object:
-            //theServer.video = new VideoStream(VideoFileName);
-            //theServer.songfile = new MP3Object(VideoFileName);
-            
             
             //init RTP socket
             theServer.RTPsocket = new DatagramSocket();
@@ -216,9 +220,9 @@ public class Server extends JFrame implements ActionListener {
                 
                 
                 sender.setSong(songfile);
-                //theServer.send_MP3_Tags();
+                theServer.send_MP3_Tags();
                 sender.start();
-                
+               
                 state = PLAYING;
                 System.out.println("New RTSP state: PLAYING");
                 queueindex++;
@@ -231,8 +235,7 @@ public class Server extends JFrame implements ActionListener {
           {
             //send back response
             theServer.send_RTSP_response();
-            //stop timer
-            theServer.timer.stop();
+            
             //update state
             state = READY;
             System.out.println("New RTSP state: READY");
@@ -253,7 +256,7 @@ public class Server extends JFrame implements ActionListener {
         {
             sender.kill();
             sender.join();
-            theServer.send_RTSP_response();
+            //theServer.send_RTSP_response();
             
             state = READY;
         }
@@ -263,57 +266,7 @@ public class Server extends JFrame implements ActionListener {
   }
 
 
-  //------------------------
-  //Handler for timer
-  //------------------------
-  public void actionPerformed(ActionEvent e) {
-
-    //if the current image nb is less than the length of the video
-    if (imagenb < songfile.getSize())
-      {
-        //update current imagenb
-        
-       
-        try {
-          //get next frame to send from the video, as well as its size
-          //byte [] temp = songfile.getFrame(imagenb);
-          //int image_length = video.getnextframe(temp);
-
-          //Builds an RTPpacket object containing the frame
-          RTPpacket rtp_packet = new RTPpacket(MPA_TYPE, imagenb, imagenb*FRAME_PERIOD, songfile.getFrame(imagenb), songfile.getFrame(imagenb).length);
-          
-          //get to total length of the full rtp packet to send
-          int packet_length = rtp_packet.getlength();
-
-          //retrieve the packet bitstream and store it in an array of bytes
-          byte[] packet_bits = new byte[packet_length];
-          rtp_packet.getpacket(packet_bits);
-
-          //send the packet as a DatagramPacket over the UDP socket 
-          senddp = new DatagramPacket(packet_bits, packet_length, ClientIPAddr, RTP_dest_port);
-          RTPsocket.send(senddp);
-
-          //System.out.println("Send frame #"+imagenb);
-          //print the header bitstream
-          rtp_packet.printheader();
-
-          //update GUI
-          label.setText("Send frame #" + imagenb);
-          imagenb++;
-        }
-        catch(Exception ex)
-          {
-            System.out.println("Exception caught 1: "+ex);
-            System.exit(0);
-          }
-      }
-    else
-      {
-        //if we have reached the end of the video file, stop the timer
-        timer.stop();
-        state = READY;
-      }
-  }
+  
 
   //------------------------------------
   //Parse RTSP Request
@@ -346,9 +299,7 @@ public class Server extends JFrame implements ActionListener {
           request_type = STOP;
       if (request_type == SETUP)
         {
-          //extract VideoFileName from RequestLine
-          //VideoFileName = tokens.nextToken();
-          videoqueue.add(tokens.nextToken());
+          
         }
 
       //parse the SeqNumLine and extract CSeq field
@@ -404,13 +355,12 @@ public class Server extends JFrame implements ActionListener {
   */
  private void send_MP3_Tags() throws IOException, TagException
  {
-     MP3File tagfile = new MP3File(videoqueue.get(queueindex));
+     MP3File tagfile = new MP3File(videoqueue.get(queueindex % videoqueue.size()));
      ID3v1 id3v1 = tagfile.getID3v1Tag();
      
-     RTSPBufferedWriter.write(id3v1.getArtist() + CRLF);
-     RTSPBufferedWriter.write(id3v1.getSongTitle() + CRLF);
-     RTSPBufferedWriter.write(id3v1.getAlbum() + CRLF);
-     RTSPBufferedWriter.flush();
+     
+     String tags = "**" + id3v1.getArtist() + "+" + id3v1.getSongTitle() + "+" + id3v1.getAlbum();
+     pb.sendtoAll(tags);
  }
   
   

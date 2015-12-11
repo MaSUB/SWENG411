@@ -1,12 +1,9 @@
 package Client_Side;
 
-import UserInterface.DownloadGUI;
 import Exceptions.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
  
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -33,8 +30,9 @@ public class FTPDownload extends SwingWorker<Void, Void> {
     private String              dlPath;
     private String              savePath;
     
-    public DownloadGUI dlGui;
+    DownloadGUI dlGui;
     
+    //  The constructor needs to also initalize the GUI that needs done above.
     public FTPDownload(String h, int p, String u, String pass, String dl,
                         String sPath, DownloadGUI gui) {
        
@@ -47,15 +45,13 @@ public class FTPDownload extends SwingWorker<Void, Void> {
         dlGui       = gui;
                 
     }
-    
-    public FTPDownload() {
-        
+
+    FTPDownload() {
         dlGui = new DownloadGUI();
-        
     }
     
     @Override
-    public Void doInBackground() throws Exception {
+    protected Void doInBackground() throws Exception {
         
         FTPUtil ftp = new FTPUtil(host,port,username,password);
         
@@ -102,7 +98,7 @@ public class FTPDownload extends SwingWorker<Void, Void> {
             
             ///////////////////////////////////////////////////////////////////
             //
-            //  these two statements close the out/inputStream and the ftpClients
+            //  these two statements close the outputStream and the ftpClients
             //  connection since the file is now finished.
             //
             ///////////////////////////////////////////////////////////////////
@@ -134,6 +130,8 @@ public class FTPDownload extends SwingWorker<Void, Void> {
         ftp.disconnect();
         }
         return null;
+
+        
         
     }
     
@@ -145,7 +143,7 @@ public class FTPDownload extends SwingWorker<Void, Void> {
     //
     ///////////////////////////////////////////////////////////////////////////
     @Override
-    public void done() {
+    protected void done() {
         
         if (!isCancelled()) {
             
@@ -153,12 +151,7 @@ public class FTPDownload extends SwingWorker<Void, Void> {
                     + "successfully." + "\nThe file path is:\t" + savePath
                     , "Success",
                     JOptionPane.INFORMATION_MESSAGE);
-            try {
-                this.finalize();
-            } catch (Throwable ex) {
-                Logger.getLogger(FTPDownload.class.getName()).log(Level.SEVERE, null, ex);
-            }
             
         }
-    }
+    } 
 }

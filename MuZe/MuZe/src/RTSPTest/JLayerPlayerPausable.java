@@ -377,7 +377,7 @@ public class JLayerPlayerPausable{
 		return stopped;
 	}
 	
-        public FloatControl getFloatControl() throws JavaLayerException{
+        public FloatControl getFloatControl( float f) throws JavaLayerException{
 		FloatControl controleVolume = null;
 		SourceDataLine source = null;
 		AudioFormat fmt = null;
@@ -410,10 +410,10 @@ public class JLayerPlayerPausable{
             excecao = ex;
         }
         if (source == null) {
-            throw new JavaLayerException("Nao foi possivel obter a linha de audio", excecao);
+            throw new JavaLayerException("There's no possible lines of audio", excecao);
         }
         else{
-        	float gain = 0.0F;
+        	
         	if(source.isControlSupported(FloatControl.Type.MASTER_GAIN)){
         		controleVolume = (FloatControl) source.getControl(FloatControl.Type.MASTER_GAIN);
         	}
@@ -421,8 +421,10 @@ public class JLayerPlayerPausable{
                 controleVolume = (FloatControl) source.getControl(FloatControl.Type.VOLUME);
             }
         	if(controleVolume != null){
-	            float newGain = Math.min(Math.max(gain, controleVolume.getMinimum()), controleVolume.getMaximum());
-	            controleVolume.setValue(newGain);
+                    float gain = f; // number between 0 and 1 (loudest)
+                    float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
+	            //float newGain = Math.min(Math.max(gain, controleVolume.getMinimum()), controleVolume.getMaximum());
+	            controleVolume.setValue(dB);
         	}
         }
         return controleVolume;

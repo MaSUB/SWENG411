@@ -102,7 +102,7 @@ public class StreamProcessorHost implements Runnable
                 
                 
                 
-                if((player == null && actualsize >=   20000))
+                if((player == null && actualsize >=   25000) ||( (player != null) && (player.isComplete() && actualsize > 15000)))
                 {
                     
                     player = new Mp3Player(Directory_Archive +Temp_mp3_archive);
@@ -174,10 +174,5 @@ public class StreamProcessorHost implements Runnable
     
     //method to get the float control of the player and set the volume accordingly
     
-    public void setVolume(float f) throws JavaLayerException
-    {
-        FloatControl floatc = player.getFloatControl();
-        
-        floatc.setValue(f);
-    }
+   
 }

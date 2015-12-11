@@ -174,10 +174,5 @@ public class StreamProcessorClient implements Runnable
     
     //method to get the float control of the player and set the volume accordingly
     
-    public void setVolume(float f) throws JavaLayerException
-    {
-        FloatControl floatc = player.getFloatControl();
-        
-        floatc.setValue(f);
-    }
+    
 }

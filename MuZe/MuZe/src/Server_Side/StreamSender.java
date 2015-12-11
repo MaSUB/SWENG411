@@ -126,6 +126,7 @@ public class StreamSender implements Runnable
     }
     public void kill()
     {
+        RTPSocket.close();
         isRunning = false;
     }
     
